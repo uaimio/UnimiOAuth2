@@ -1,0 +1,73 @@
+server:
+  port: 9000
+
+logging:
+  level:
+    org:
+      springframework: debug
+
+spring:
+  h2:
+    console:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+
+  security:
+    oauth2:
+      authorizationserver:
+        # impostazioni per issuer openid
+        issuer: "http://auth-server:9000"
+
+        # impostazioni per client
+        client:
+          client-1:
+            registration:
+              client-id: "client-1"
+              # the client secret is "secret" (without quotes)
+              client-secret: "{noop}secret"
+              client-authentication-methods:
+                - "client_secret_basic"
+                - "client_secret_jwt"
+                # - "code"
+              authorization-grant-types:
+                # - "client_credentials"
+                - "authorization_code"
+                - "refresh_token"
+              redirect-uris:
+                - "http://127.0.0.1:8080/login/oauth2/code/client-1-oidc"
+                - "http://127.0.0.1:8080/authorized"
+              # post-logout-redirect-uris:
+                # - "http://localhost:8080/logged-out"
+              scopes:
+                - "openid"
+                # - "profile"
+                - "message.read"
+                # - "message.write"
+            # require-authorization-consent: true
+      # provider:
+      #   spring:
+      #     issuer-uri: "http://localhost:9000"
+  
+# spring:
+#   security:
+#     oauth2:
+#       authorizationserver:
+#         client:
+#           oidc-client:
+#             registration:
+#               client-id: 123
+#               client-secret: 123
+#               client-authentication-methods:
+#                 - "client_secret_basic"
+#               authorization-grant-types:
+#                 - "authorization_code"
+#                 - "refresh_token"
+#               redirect-uris:
+#                 - "http://localhost:8080/login/oauth2/code/oidc-client"
+#               post-logout-redirect-uris:
+#                 - "http://localhost:8080/"
+#               scopes:
+#                 - "openid"
+#                 - "profile"
+#             require-authorization-consent: true

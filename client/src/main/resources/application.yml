@@ -1,0 +1,56 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      springframework: debug
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          client-1-oidc:
+            provider: auth-server
+            client-id: client-1
+            client-secret: secret #"{noop}secret"
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            # redirect-uri: http://localhost:8080/authorized
+            scope: openid
+            client-name: "client-1-oidc"
+          client-1-authorization-code:
+            provider: auth-server
+            client-id: client-1
+            client-secret: secret #"{noop}secret"
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/authorized"
+            scope: message.read
+            client-name: "client-1-authorization-code"
+
+          # client-odc:
+          #   provider: "auth-server"
+          #   client-id: "client-1"
+          #   client-secret: "secret"
+          #   authorization-grant-type: "authorization_code"
+          #   redirect-uri: "http://127.0.0.1:8080/authorized"
+          #   scope: "message.read"
+          #   client-name: "client-authorization-code"
+        provider:
+          auth-server:
+            issuer-uri: "http://auth-server:9000"
+            # authorization-uri: "http://localhost:9000/oauth2/authorize"
+            # token-uri: "http://localhost:9000/oauth2/token"
+            # jwk-set-uri: "http://localhost:9000/oauth2/jwks"
+
+# spring:
+#   security:
+#     oauth2:
+#       client:
+#         registration:
+#           github:
+#             clientId: 4641dadd94ec8307e690
+#             clientSecret: 8c8ce7a1cf0569a12ce581310dbc9d34f761eeaa
