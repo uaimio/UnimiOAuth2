@@ -4,7 +4,9 @@ server:
 logging:
   level:
     org:
-      springframework: debug
+      springframework: info
+    com:
+      oauth2: debug
 
 spring:
   security:
@@ -45,12 +47,3 @@ spring:
             # authorization-uri: "http://localhost:9000/oauth2/authorize"
             # token-uri: "http://localhost:9000/oauth2/token"
             # jwk-set-uri: "http://localhost:9000/oauth2/jwks"
-
-# spring:
-#   security:
-#     oauth2:
-#       client:
-#         registration:
-#           github:
-#             clientId: 4641dadd94ec8307e690
-#             clientSecret: 8c8ce7a1cf0569a12ce581310dbc9d34f761eeaa

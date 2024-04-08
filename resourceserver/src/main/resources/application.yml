@@ -4,7 +4,9 @@ server:
 logging:
   level:
     org:
-      springframework: debug
+      springframework: info
+    com:
+      oauth2: debug
 
 spring:
   security:

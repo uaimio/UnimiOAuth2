@@ -15,7 +15,7 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/resource-base/**")
                 .authorizeHttpRequests(authorize -> authorize.anyRequest()
-                        .hasAuthority("SCOPE_message.read"))
+                        .hasAnyAuthority("SCOPE_openid"))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
