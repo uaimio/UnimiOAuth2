@@ -1,16 +1,13 @@
-server:
-  port: 8081
+server.port: 8081
 
-logging:
-  level:
-    org:
-      springframework: info
-    com:
-      oauth2: debug
+logging.level:
+  org:
+    springframework: debug
+  com:
+    oauth2: debug
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://auth-server:9000
+  security.oauth2.resourceserver.jwt.issuer-uri: http://auth-server:9000
+  data.mongodb:
+    uri: mongodb://localhost:27017/
+    database: local

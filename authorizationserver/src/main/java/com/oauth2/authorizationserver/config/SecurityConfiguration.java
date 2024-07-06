@@ -2,12 +2,17 @@ package com.oauth2.authorizationserver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -15,33 +20,41 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    // return http.authorizeHttpRequests(auth -> {
-    // // auth.requestMatchers("/login", "/logout").permitAll();
-    // // auth.anyRequest().authenticated();
-    // // auth.requestMatchers("/.well-known/**").permitAll();
-    // //.anyRequest().hasRole("USER");
-    // })
-    // // .oauth2Login(withDefaults())
-    // .formLogin(withDefaults())
-    // .build();
-    // }
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Bean
-    @Order(1)
-    SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(withDefaults()); // Enable OpenID Connect 1.0
-        return http.formLogin(withDefaults()).build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    @Order(2)
+    public AuthenticationManager authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(authProvider);
+    }
+
+    // @Bean
+    // @Order(1)
+    // SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    //     OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+    //     http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+    //             .oidc(withDefaults()); // Enable OpenID Connect 1.0
+    //     return http.formLogin(withDefaults()).build();
+    // }
+
+    @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest()
-                .authenticated())
+        http.authorizeHttpRequests(authorizeRequests -> 
+                authorizeRequests
+                    .requestMatchers("/login")
+                    .permitAll()
+                    .requestMatchers("/logout")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
                 .formLogin(withDefaults());
         return http.build();
     }
