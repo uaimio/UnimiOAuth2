@@ -11,7 +11,7 @@ import com.oauth2.authorizationserver.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .authorities("USER")
+                .authorities("SCOPE_opeid")
                 .build();
     }
 }

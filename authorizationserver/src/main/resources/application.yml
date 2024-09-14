@@ -5,6 +5,8 @@ logging:
   level:
     org:
       springframework: debug
+    com:
+      oauth2: debug
 
 spring:
   datasource:
@@ -26,59 +28,34 @@ spring:
 
   security:
     oauth2:
+      # resourceserver.jwt.issuer-uri: http://auth-server:9000
+
       authorizationserver:
         # impostazioni per issuer openid
-        issuer: "http://auth-server:9000"
+        # issuer: http://auth-server:9000
 
         # impostazioni per client
         client:
-          client-1:
+          client1:
             registration:
-              client-id: "client-1"
-              # the client secret is "secret" (without quotes)
-              client-secret: "{noop}secret"
+              client-id: client1
+              client-secret: "$2a$12$YX2n7OY12cLFIjieZm37EuYvxq14CmlRuNJweK23DLs0DU/chGKIa"
               client-authentication-methods:
-                - "client_secret_basic"
-                - "client_secret_jwt"
+                - client_secret_basic
+                # - client_secret_jwt
                 # - "code"
               authorization-grant-types:
-                # - "client_credentials"
-                - "authorization_code"
-                - "refresh_token"
+                - client_credentials
+                - authorization_code
+                - refresh_token
               redirect-uris:
-                - "http://127.0.0.1:8080/login/oauth2/code/client-1-oidc"
-                - "http://127.0.0.1:8080/authorized"
+                - http://127.0.0.1:8080/login/oauth2/code/client1
+                - http://127.0.0.1:8080/authorized
               # post-logout-redirect-uris:
                 # - "http://localhost:8080/logged-out"
               scopes:
-                - "openid"
-                # - "profile"
-                - "message.read"
-                # - "message.write"
+                - openid
             # require-authorization-consent: true
-      # provider:
-      #   spring:
-      #     issuer-uri: "http://localhost:9000"
-  
-# spring:
-#   security:
-#     oauth2:
-#       authorizationserver:
-#         client:
-#           oidc-client:
-#             registration:
-#               client-id: 123
-#               client-secret: 123
-#               client-authentication-methods:
-#                 - "client_secret_basic"
-#               authorization-grant-types:
-#                 - "authorization_code"
-#                 - "refresh_token"
-#               redirect-uris:
-#                 - "http://localhost:8080/login/oauth2/code/oidc-client"
-#               post-logout-redirect-uris:
-#                 - "http://localhost:8080/"
-#               scopes:
-#                 - "openid"
-#                 - "profile"
-#             require-authorization-consent: true
+        # provider:
+        #   spring:
+        #     issuer-uri: "http://auth-server:9000"

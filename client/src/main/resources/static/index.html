@@ -18,7 +18,7 @@
         With GitHub: <a href="/oauth2/authorization/github">click here</a>
     </div>
     <div class="container unauthenticated">
-        With Custom: <a href="/oauth2/authorization/auth-server">click here</a>
+        With Custom: <a href="/oauth2/authorization/client1">click here</a>
     </div>
     <div class="container authenticated" style="display:none">
         Logged in as: <span id="user"></span>
@@ -26,8 +26,8 @@
 </body>
 
 <script type="text/javascript">
-    $.get("/base/hello", function(data) {
-        $("#user").html(data);
+    $.get("/base/user", function(data) {
+        $("#user").html(data.name);
         $(".unauthenticated").hide()
         $(".authenticated").show()
     });

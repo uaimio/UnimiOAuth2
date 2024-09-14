@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,37 +18,38 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/base")
 public class SocialController {
 
-    private ObjectMapper objectMapper; //= new ObjectMapper(new JavaTimeModule());
+    @Value("${resourceserver.uri}")
+    private String resourceServerUri;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper; // = new ObjectMapper(new JavaTimeModule());
 
     private static Logger logger = LoggerFactory.getLogger(SocialController.class);
-
-    SocialController() {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
-    }
 
     @GetMapping("/hello-world")
     public String getMethodName() {
         return "Hello world";
     }
-    
+
     @GetMapping("/user")
     public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-        return Collections.singletonMap("name", principal);//principal.getAttribute("login"));
+        return Collections.singletonMap("name", principal.getName());
     }
 
     @GetMapping("/hi")
@@ -55,7 +58,8 @@ public class SocialController {
     }
 
     @GetMapping("/hello")
-    public String helloWorldExternal(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user) throws JsonProcessingException {
+    public String helloWorldExternal(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user)
+            throws JsonProcessingException {
         logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
 
         RestTemplate restTemplate = new RestTemplate();
@@ -65,33 +69,43 @@ public class SocialController {
 
         HttpEntity<Object> request = new HttpEntity<>(headers);
         logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-        ResponseEntity<String> response =
-                restTemplate.exchange(
-                    "http://localhost:8081/resource-base/hello-world",
-                    HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                resourceServerUri + "/resource-base/hello-world",
+                HttpMethod.GET, request, String.class);
 
         return "The return from resource is: " + response.getBody();
     }
 
-    @GetMapping("/document")
-    public ResponseEntity<byte[]> getDocument(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user) throws JsonProcessingException {
+    @GetMapping("/documentsList")
+    public Object getDocumentsList(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user)
+            throws JsonProcessingException {
         // logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
 
-        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(user.getAccessToken().getTokenValue());
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Object> response = restTemplate.exchange(
+                resourceServerUri + "/document/",
+                HttpMethod.GET, request, Object.class);
+
+        return new ResponseEntity<>(response.getBody(), response.getHeaders(), HttpStatus.OK);
+    }
+
+    @GetMapping("/document/{documentId}")
+    public ResponseEntity<byte[]> getDocumentByDocumentId(
+            @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user,
+            @PathVariable String documentId) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(user.getAccessToken().getTokenValue());
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> document = restTemplate.exchange(
-                "http://localhost:8081/resource-base/download/666979df281ad55e26da9b28",
+                resourceServerUri + "/document/" + documentId,
                 HttpMethod.GET, request, byte[].class);
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=document.pdf");
-        responseHeaders.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
-
-        return new ResponseEntity<>(document.getBody(), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(document.getBody(), document.getHeaders(), HttpStatus.OK);
     }
-    
+
 }
