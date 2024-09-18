@@ -28,11 +28,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(value = "/base")
-public class SocialController {
+@RequestMapping(value = "/client-base")
+public class ClientController {
 
-    @Value("${resourceserver.uri}")
-    private String resourceServerUri;
+    @Value("${resourceserver.uri}${resourceserver.documents-url}")
+    private String documentsControllerResourceServerUri;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -40,7 +40,7 @@ public class SocialController {
     @Autowired
     private ObjectMapper objectMapper; // = new ObjectMapper(new JavaTimeModule());
 
-    private static Logger logger = LoggerFactory.getLogger(SocialController.class);
+    private static Logger logger = LoggerFactory.getLogger(ClientController.class);
 
     @GetMapping("/hello-world")
     public String getMethodName() {
@@ -60,9 +60,6 @@ public class SocialController {
     @GetMapping("/hello")
     public String helloWorldExternal(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user)
             throws JsonProcessingException {
-        logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
-
-        RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(user.getAccessToken().getTokenValue());
@@ -70,7 +67,7 @@ public class SocialController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
         ResponseEntity<String> response = restTemplate.exchange(
-                resourceServerUri + "/resource-base/hello-world",
+                documentsControllerResourceServerUri + "hello-world",
                 HttpMethod.GET, request, String.class);
 
         return "The return from resource is: " + response.getBody();
@@ -79,14 +76,13 @@ public class SocialController {
     @GetMapping("/documentsList")
     public Object getDocumentsList(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user)
             throws JsonProcessingException {
-        // logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(user.getAccessToken().getTokenValue());
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
         ResponseEntity<Object> response = restTemplate.exchange(
-                resourceServerUri + "/document/",
+                documentsControllerResourceServerUri + "/findAll",
                 HttpMethod.GET, request, Object.class);
 
         return new ResponseEntity<>(response.getBody(), response.getHeaders(), HttpStatus.OK);
@@ -102,7 +98,7 @@ public class SocialController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> document = restTemplate.exchange(
-                resourceServerUri + "/document/" + documentId,
+                documentsControllerResourceServerUri + "/" + documentId,
                 HttpMethod.GET, request, byte[].class);
 
         return new ResponseEntity<>(document.getBody(), document.getHeaders(), HttpStatus.OK);

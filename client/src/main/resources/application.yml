@@ -41,5 +41,7 @@ spring:
             # user-info-uri: http://localhost:9000/
 
 
-resourceserver.uri: http://localhost:8081
+resourceserver:
+  uri: http://localhost:8081
+  documents-url: /documents
  

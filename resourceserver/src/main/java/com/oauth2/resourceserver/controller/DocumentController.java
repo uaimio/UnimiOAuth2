@@ -25,13 +25,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/document")
+@RequestMapping(path = "/documents")
 public class DocumentController {
 
     @Autowired
     private PdfService pdfService;
 
-    @GetMapping("/")
+    @GetMapping("/findAll")
     public List<ElementDTO> getAllDocuments() {
         return pdfService.getMetadataAllDocuments().stream().map(ElementDTO::new).toList();
     }

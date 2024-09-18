@@ -14,7 +14,7 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/document/**")
+        http.securityMatcher("/documents/**")
                 .authorizeHttpRequests(authorize -> 
                     authorize
                         .anyRequest()
