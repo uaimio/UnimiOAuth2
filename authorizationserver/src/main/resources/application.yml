@@ -9,10 +9,15 @@ logging:
       oauth2: debug
 
 spring:
+  # datasource:
+    # url: jdbc:mysql://127.0.0.1:3306/oauth2?createDatabaseIfNotExist=true
+    # username: root
+    # password: root
+    # driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/oauth2?createDatabaseIfNotExist=true
-    username: root
-    password: root
+    url: ${MYSQL_REMOTE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -28,11 +33,7 @@ spring:
 
   security:
     oauth2:
-      # resourceserver.jwt.issuer-uri: http://auth-server:9000
-
       authorizationserver:
-        # impostazioni per issuer openid
-        # issuer: http://auth-server:9000
 
         # impostazioni per client
         client:
@@ -56,6 +57,3 @@ spring:
               scopes:
                 - openid
             # require-authorization-consent: true
-        # provider:
-        #   spring:
-        #     issuer-uri: "http://auth-server:9000"
