@@ -44,4 +44,5 @@ spring:
 resourceserver:
   uri: http://localhost:8081
   documents-url: /documents
+  resource-base-url: /resource-base
  

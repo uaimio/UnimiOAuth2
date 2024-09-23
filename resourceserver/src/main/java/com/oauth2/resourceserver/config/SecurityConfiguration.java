@@ -14,11 +14,12 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/documents/**")
-                .authorizeHttpRequests(authorize -> 
-                    authorize
-                        .anyRequest()
-                        .hasAnyAuthority("SCOPE_openid"))
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                .requestMatchers(
+                        "/unsecured/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
         return http.build();
     }
