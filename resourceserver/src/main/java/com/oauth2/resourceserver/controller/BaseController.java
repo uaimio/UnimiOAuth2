@@ -1,16 +1,17 @@
 package com.oauth2.resourceserver.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
-
-@RestController
-@RequestMapping(value = "/resource-base")
-public class BaseController {
+public interface BaseController {
     
-    @GetMapping
-    public String baseController() {
+    @GetMapping("/hello-world")
+    default public String baseController() {
         return "Hello world from Resource Server";
     }
+
+    List<String> checkRolesAndSetIfNull(List<String> codiRoleAccess, String token) throws Exception;
+
+    String getUserRole(String token) throws Exception;
 }

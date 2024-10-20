@@ -62,7 +62,7 @@ public class DocumentController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
         ResponseEntity<Object> response = restTemplate.exchange(
-                documentsControllerResourceServerUri + "/findAll",
+                documentsControllerResourceServerUri + "/find-all",
                 HttpMethod.GET, request, Object.class);
 
         return new ResponseEntity<>(response.getBody(), response.getHeaders(), HttpStatus.OK);

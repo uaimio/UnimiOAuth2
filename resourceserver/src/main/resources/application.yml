@@ -7,7 +7,8 @@ logging.level:
     oauth2: debug
 
 spring:
-  security.oauth2.resourceserver.jwt.issuer-uri: http://auth-server:9000
+  security:
+    oauth2.resourceserver.jwt.issuer-uri: http://auth-server:9000
   data.mongodb:
     # uri: mongodb://localhost:27017/
     uri: ${MONGODB_REMOTE_URL}

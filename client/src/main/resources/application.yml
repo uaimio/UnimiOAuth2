@@ -13,36 +13,25 @@ spring:
     oauth2:
       client:
         registration:
-          # client-1-oidc:
-          #   provider: auth-server
-          #   client-id: client-1-oidc
-          #   client-secret: secret
-          #   # client-authentication-method: client_secret_basic
-          #   # authorization-grant-type: authorization_code
-          #   # redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
-          #   # redirect-uri: http://127.0.0.1:8080/authorized
-          #   scope: openid
-          #   client-name: "client-1-oidc"
           client1:
             provider: auth-server
             client-id: client1
             client-secret: secret
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code #, refresh_token
-            redirect-uri: http://127.0.0.1:8080/login/oauth2/code/{registrationId}
-            scope: openid #document.read, document.write
-            client-name: client1
+            redirect-uri: http://127.0.0.1:8080/login/oauth2/code/client1
+            scope: openid,profile,document:all
+            client-name: Client1
         provider:
           auth-server:
             issuer-uri: http://auth-server:9000
             # authorization-uri: http://auth-server:9000/oauth2/authorize
             # token-uri: http://auth-server:9000/oauth2/token
-            # jwk-set-uri: http://localhost:9000/oauth2/jwks
-            # user-info-uri: http://localhost:9000/
+            # jwk-set-uri: http://auth-server:9000/oauth2/jwks
+            # user-info-uri: http://auth-server:9000/
 
 
 resourceserver:
-  uri: http://localhost:8081
+  uri: http://127.0.0.1:8081
   documents-url: /documents
   resource-base-url: /resource-base
- 

@@ -10,21 +10,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "documents_new")
-public class Element {
+@Document(collection = "configurations")
+public class Configuration {
     
     @Id
     private String id;
 
-    private String documentValue;
-
-    private String filename;
-
-    private String fileType;
-
-    private Long fileSize;
-
-    private byte[] file;
+    private String codiRole;
 
     private List<String> rolesAccess;
 }

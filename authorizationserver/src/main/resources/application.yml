@@ -1,12 +1,10 @@
-server:
-  port: 9000
+server.port: 9000
 
-logging:
-  level:
-    org:
-      springframework: debug
-    com:
-      oauth2: debug
+logging.level:
+  org:
+    springframework: debug
+  com:
+    oauth2: debug
 
 spring:
   # datasource:
@@ -31,29 +29,33 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-  security:
-    oauth2:
-      authorizationserver:
+  security.oauth2:
+    resourceserver.jwt.issuer-uri: http://auth-server:9000
 
-        # impostazioni per client
-        client:
-          client1:
-            registration:
-              client-id: client1
-              client-secret: "$2a$12$YX2n7OY12cLFIjieZm37EuYvxq14CmlRuNJweK23DLs0DU/chGKIa"
-              client-authentication-methods:
-                - client_secret_basic
-                # - client_secret_jwt
-                # - "code"
-              authorization-grant-types:
-                - client_credentials
-                - authorization_code
-                - refresh_token
-              redirect-uris:
-                - http://127.0.0.1:8080/login/oauth2/code/client1
-                - http://127.0.0.1:8080/authorized
-              # post-logout-redirect-uris:
-                # - "http://localhost:8080/logged-out"
-              scopes:
-                - openid
-            # require-authorization-consent: true
+    authorizationserver:
+      issuer: "http://auth-server:9000"
+      # impostazioni per client
+      client:
+        client1:
+          registration:
+            client-id: "client1"
+            client-secret: "$2a$12$YX2n7OY12cLFIjieZm37EuYvxq14CmlRuNJweK23DLs0DU/chGKIa"
+            # client-secret: "{noop}secret"
+            client-authentication-methods:
+              - "client_secret_basic"
+              # - client_secret_jwt
+              # - "code"
+            authorization-grant-types:
+              # - client_credentials
+              - "authorization_code"
+              - "refresh_token"
+            redirect-uris:
+              - "http://127.0.0.1:8080/login/oauth2/code/client1"
+              - "http://127.0.0.1:8080/authorized"
+            # post-logout-redirect-uris:
+              # - "http://localhost:8080/logged-out"
+            scopes:
+              - "openid"
+              - "profile"
+              - "document:all"
+          require-authorization-consent: true
