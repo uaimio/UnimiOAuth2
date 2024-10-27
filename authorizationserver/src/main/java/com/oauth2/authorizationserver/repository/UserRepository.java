@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.oauth2.authorizationserver.model.User;
 
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 

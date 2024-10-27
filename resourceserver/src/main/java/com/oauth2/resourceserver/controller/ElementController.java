@@ -55,13 +55,6 @@ public class ElementController implements BaseController {
         return elementService.getMetadataAllDocuments(getUserRole(token));
     }
 
-    @PostMapping("/")
-    public ResponseEntity<ElementDTO> insertDocument(@RequestHeader("Authorization") String token,
-            @RequestPart MultipartFile file, @RequestPart List<String> codiRoleAccess) throws Exception {
-
-        return elementService.saveDocument(file, checkRolesAndSetIfNull(codiRoleAccess, token));
-    }
-
     @GetMapping("/{documentId}/metadata")
     public ResponseEntity<ElementDTO> getMetadataDocument(@RequestHeader("Authorization") String token,
             @PathVariable String documentId) throws Exception {
@@ -74,6 +67,13 @@ public class ElementController implements BaseController {
             @PathVariable String documentId) throws Exception {
 
         return elementService.getDocumentFile(documentId, getUserRole(token));
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<ElementDTO> insertDocument(@RequestHeader("Authorization") String token,
+            @RequestPart MultipartFile file) throws Exception {
+
+        return elementService.saveDocument(file, checkRolesAndSetIfNull(null, token));
     }
 
     @PutMapping("/{documentId}")

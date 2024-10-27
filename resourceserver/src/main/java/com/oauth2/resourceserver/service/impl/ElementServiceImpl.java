@@ -42,29 +42,12 @@ public class ElementServiceImpl implements ElementService {
         return new ResponseEntity<>(documentsList, HttpStatus.OK);
     }
 
-    @Transactional
-    @Override
-    public ResponseEntity<ElementDTO> saveDocument(MultipartFile file, List<String> codiRoleList) throws IOException {
-        if (file == null || CollectionUtils.isEmpty(codiRoleList))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        Element newDocument = new Element();
-        newDocument.setFile(file.getBytes());
-        newDocument.setFilename(file.getOriginalFilename());
-        newDocument.setFileType(file.getContentType());
-        newDocument.setFileSize(file.getSize());
-        newDocument.setRolesAccess(codiRoleList);
-
-        newDocument = elementRepository.save(newDocument);
-        return new ResponseEntity<>(new ElementDTO(newDocument), HttpStatus.CREATED);
-    }
-
     @Override
     public ResponseEntity<ElementDTO> getMetadataDocument(String documentId, String codiRole) {
         Optional<Element> document = getDocumentByDocumentIdAndCodiRole(documentId, codiRole);
         if (document.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        
+
         return new ResponseEntity<>(new ElementDTO(document.get()), HttpStatus.OK);
     }
 
@@ -80,6 +63,23 @@ public class ElementServiceImpl implements ElementService {
         headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(documentOptional.get().getFileSize()));
 
         return new ResponseEntity<>(documentOptional.get().getFile(), headers, HttpStatus.OK);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<ElementDTO> saveDocument(MultipartFile file, List<String> codiRoleList) throws IOException {
+        if (file == null || CollectionUtils.isEmpty(codiRoleList))
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Element newDocument = new Element();
+        newDocument.setFile(file.getBytes());
+        newDocument.setFilename(file.getOriginalFilename());
+        newDocument.setFileType(file.getContentType());
+        newDocument.setFileSize(file.getSize());
+        newDocument.setRolesAccess(codiRoleList);
+
+        newDocument = elementRepository.save(newDocument);
+        return new ResponseEntity<>(new ElementDTO(newDocument), HttpStatus.CREATED);
     }
 
     @Transactional

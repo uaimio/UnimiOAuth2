@@ -35,24 +35,18 @@ public class UnsecureController implements BaseController {
     private ElementService elementService;
 
     @GetMapping("/find-all")
-    public ResponseEntity<List<ElementDTO>> getAllDocuments(@RequestHeader(required = false, name = "Authorization") String token) throws Exception {
+    public ResponseEntity<List<ElementDTO>> getAllDocuments(
+            @RequestHeader(required = false, name = "Authorization") String token) throws Exception {
         return elementService.getMetadataAllDocuments(getUserRole(token));
     }
 
-    @PostMapping("/")
-    public ResponseEntity<ElementDTO> insertDocument(@RequestHeader(required = false, name = "Authorization") String token,
-            @RequestPart MultipartFile file, @RequestPart List<String> codiRoleAccess) throws Exception {
-
-        return elementService.saveDocument(file, checkRolesAndSetIfNull(codiRoleAccess, token));
-    }
-
     @GetMapping("/{documentId}/metadata")
-    public ResponseEntity<ElementDTO> getMetadataDocument(@RequestHeader(required = false, name =  "Authorization") String token,
+    public ResponseEntity<ElementDTO> getMetadataDocument(
+            @RequestHeader(required = false, name = "Authorization") String token,
             @PathVariable String documentId) throws Exception {
 
         return elementService.getMetadataDocument(documentId, getUserRole(token));
     }
-    
 
     @GetMapping("/{documentId}")
     public ResponseEntity<byte[]> getDocument(@RequestHeader(required = false, name = "Authorization") String token,
@@ -61,11 +55,22 @@ public class UnsecureController implements BaseController {
         return elementService.getDocumentFile(documentId, getUserRole(token));
     }
 
-    @PutMapping("/{documentId}")
-    public ResponseEntity<ElementDTO> updateDocumentByDocumentId(@RequestHeader(required = false, name = "Authorization") String token,
-            @PathVariable String documentId, @RequestPart MultipartFile file, @RequestBody List<String> codiRoleAccess) throws Exception {
+    @PostMapping("/")
+    public ResponseEntity<ElementDTO> insertDocument(
+            @RequestHeader(required = false, name = "Authorization") String token,
+            @RequestPart MultipartFile file, @RequestPart List<String> codiRoleAccess) throws Exception {
 
-        return elementService.updateDocument(documentId, file, getUserRole(token), checkRolesAndSetIfNull(codiRoleAccess, token));
+        return elementService.saveDocument(file, checkRolesAndSetIfNull(codiRoleAccess, token));
+    }
+
+    @PutMapping("/{documentId}")
+    public ResponseEntity<ElementDTO> updateDocumentByDocumentId(
+            @RequestHeader(required = false, name = "Authorization") String token,
+            @PathVariable String documentId, @RequestPart MultipartFile file, @RequestBody List<String> codiRoleAccess)
+            throws Exception {
+
+        return elementService.updateDocument(documentId, file, getUserRole(token),
+                checkRolesAndSetIfNull(codiRoleAccess, token));
     }
 
     @DeleteMapping("/{documentId}")

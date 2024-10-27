@@ -1,6 +1,6 @@
 package com.oauth2.client.controller;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +44,8 @@ public class ClientController {
     }
 
     @GetMapping("/user")
-    public Map<String, Object> user(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
-            @AuthenticationPrincipal Object oauth2User) {
-
-        Map<String, Object> objectsMap = new HashMap<>();
-        objectsMap.put("authorized client", authorizedClient); // principal);
-        objectsMap.put("oauth2User", oauth2User);
-        // objectsMap.put("authenticationPrincipal", authenticationPrincipal);
-        return objectsMap;
+    public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
+        return Collections.singletonMap("name", principal.getName());
     }
 
     @GetMapping("/user-by-auth")

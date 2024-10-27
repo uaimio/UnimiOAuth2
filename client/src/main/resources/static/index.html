@@ -18,26 +18,64 @@
 </head>
 
 <body>
-    <div class="container unauthenticated">
+    <!-- <div class="container unauthenticated">
         With GitHub: <a href="/oauth2/authorization/github">click here</a>
-    </div>
+    </div> -->
     <div class="container unauthenticated">
-        With Custom: <a href="/oauth2/authorization/client1">click here</a>
+        With Local Authorization Server: <a href="/oauth2/authorization/client1">click here</a>
     </div>
     <div class="container authenticated" style="display:none">
         Logged in as: <span id="user"></span>
-        <div>
-            <button onClick="logout()" class="btn btn-primary">Logout</button>
+        <br>
+        <div class="list-group" id="documents-list"></div>
+
+        <form id="formFile">
+            <input class="form-control" type="file" id="fileInput" name="file" required>
+            <!-- <button onClick="uploadFile()" type="submit" class="btn btn-primary">Carica File</button> -->
+        </form>
+
+        <div class="d-flex w-100 justify-content-between">
+            <button onclick="uploadFile()" type="button" class="btn btn-primary">Carica file</button>
+            <button onClick="logout()" type="button" class="btn btn-danger">Logout</button>
         </div>
     </div>
 </body>
 
 <script type="text/javascript">
-    $.get("/client-base/user", function (data) {
-        $("#user").html(data.name);
-        $(".unauthenticated").hide()
-        $(".authenticated").show()
+
+    $.ajax({
+        url: "/client-base/user",
+        dataType: 'json',
+        type: 'GET',
+        success: function (response) {
+            console.log(response);
+            $("#user").html(response.name);
+            $(".unauthenticated").hide();
+            $(".authenticated").show();
+            getDocuments();
+        }
     });
+
+    var uploadFile = function () {
+        var formData = new FormData();
+        var file = $('#fileInput').get(0).files[0];
+        console.log(file.name);
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/client-documents/document/',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            // method: 'POST',
+            type: 'POST', // For jQuery < 1.9
+            success: function (response) {
+                console.log(response);
+                getDocuments();
+            }
+        });
+    }
 
     var logout = function () {
         $.post("/logout", function () {
@@ -47,6 +85,50 @@
         })
         return true;
     };
+
+    var getDocuments = function () {
+        console.log("get documents entered")
+
+        $.get("/client-documents/documents-list", function (data) {
+            $('#documents-list').empty();
+
+            if (data && data.length > 0) {
+                data.forEach(function (item) {
+                    const listItem = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <a class="mb-1" href="/client-documents/document/${item.id}">
+                                <h5 class="mb-1"> ${item.filename} </h5>
+                            </a>
+                            <small class="btn btn-primary" onClick="deleteDocument('${item.id}')"> ELIMINA </small>
+                        </div>
+                        <small> ${item.fileType} </small>
+                    `;
+
+                    $("#documents-list").append('<li class="list-group-item list-group-item-action flex-column align-items-start">' + listItem + '</li>')
+                })
+
+            }
+        });
+    }
+
+    var getDocument = function (documentId) {
+        console.log("get document function called")
+        $.get(`/client-documents/document/${documentId}`, function (response) {
+            console.log("downloading")
+        })
+    }
+
+    var deleteDocument = function (documentId) {
+        console.log("delete function called")
+        $.ajax({
+            url: `/client-documents/document/${documentId}`,
+            type: 'DELETE',
+            success: function (response) {
+                console.log(response);
+                getDocuments();
+            }
+        });
+    }
 
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
