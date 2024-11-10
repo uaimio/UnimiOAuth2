@@ -32,7 +32,7 @@ public class ElementServiceImpl implements ElementService {
         // si verifica che il documento abbia almeno
         // un ruolo autorizzato tra quelli passati
         List<ElementDTO> documentsList = elementRepository.findAll().stream().filter(element -> {
-            return element.getRolesAccess().stream().anyMatch(roles -> roles.contains(codiRole));
+            return element.getRolesAccess().stream().anyMatch(roles -> roles.contentEquals(codiRole));
         }).map(element -> {
             return new ElementDTO(element);
         }).toList();
