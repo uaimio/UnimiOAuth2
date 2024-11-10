@@ -1,5 +1,6 @@
 package com.oauth2.resourceserver.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class UnsecureController implements BaseController {
 
     @Autowired
     private ElementService elementService;
+
+    @GetMapping("/find-all-roles")
+    public ResponseEntity<List<ElementDTO>> findAllRoles() throws Exception {
+        List<ElementDTO> elements = new ArrayList<>();
+        checkRolesAndSetIfNull(null, null).stream().forEach(role -> {
+            elements.addAll(elementService.getMetadataAllDocuments(role).getBody());
+        });
+
+        return ResponseEntity.ok(elements);
+    }
 
     @GetMapping("/find-all")
     public ResponseEntity<List<ElementDTO>> getAllDocuments(
