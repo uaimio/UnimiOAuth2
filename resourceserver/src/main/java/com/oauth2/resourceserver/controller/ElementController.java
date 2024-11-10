@@ -71,9 +71,10 @@ public class ElementController implements BaseController {
 
     @PostMapping("/")
     public ResponseEntity<ElementDTO> insertDocument(@RequestHeader("Authorization") String token,
+            @RequestPart List<String> codiRoleAccess,
             @RequestPart MultipartFile file) throws Exception {
 
-        return elementService.saveDocument(file, checkRolesAndSetIfNull(null, token));
+        return elementService.saveDocument(file, checkRolesAndSetIfNull(codiRoleAccess, token));
     }
 
     @PutMapping("/{documentId}")

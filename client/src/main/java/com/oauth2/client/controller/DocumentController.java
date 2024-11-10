@@ -99,6 +99,7 @@ public class DocumentController {
     @PostMapping("/document/")
     public ResponseEntity<Object> insertDocument(
             @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user,
+            @RequestPart List<String> codiRoleAccess,
             @RequestPart MultipartFile file) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -106,6 +107,7 @@ public class DocumentController {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> multipartBody = new LinkedMultiValueMap<>();
+        multipartBody.add("codiRoleAccess", codiRoleAccess);
         multipartBody.add("file", file.getResource());
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multipartBody, headers);
 

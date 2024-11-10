@@ -29,6 +29,8 @@
         <br>
         <div class="list-group" id="documents-list"></div>
 
+        <div class="container roles" id="roles"></div>
+
         <form id="formFile">
             <input class="form-control" type="file" id="fileInput" name="file" required>
             <!-- <button onClick="uploadFile()" type="submit" class="btn btn-primary">Carica File</button> -->
@@ -53,13 +55,27 @@
             $(".unauthenticated").hide();
             $(".authenticated").show();
             getDocuments();
+            getAllRoles();
         }
     });
 
     var uploadFile = function () {
         var formData = new FormData();
+
+        var codiRoleAccess = [];
+        $("input[type='checkbox']").each(function () {
+            if ($(this).is(":checked")) {
+                codiRoleAccess.push($(this).attr('name'));
+            }
+        });
+
         var file = $('#fileInput').get(0).files[0];
-        console.log(file.name);
+
+        console.log("codiRoleAccess inseriti: " + codiRoleAccess);
+        formData.append('codiRoleAccess', new Blob([JSON.stringify(codiRoleAccess)], {
+            type: "application/json"
+        }));
+        console.log("filename: " + file.name);
         formData.append('file', file);
 
         $.ajax({
@@ -75,6 +91,30 @@
                 getDocuments();
             }
         });
+    }
+
+    var getAllRoles = function () {
+        $.ajax({
+            url: "/client-base/all-roles",
+            dataType: 'json',
+            type: 'GET',
+            success: function (response) {
+                var items = [];
+                response.forEach(function (item) {
+                    const listItem =
+                        `<div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="${item.codiRole}">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                ${item.descRole}
+                            </label>
+                        </div>`;
+
+                    items.push(listItem);
+                });
+
+                $(".roles").html(items);
+            }
+        })
     }
 
     var logout = function () {

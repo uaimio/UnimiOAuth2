@@ -73,6 +73,26 @@ public class ClientController {
         return responseEntity != null ? responseEntity.getBody() : null;
     }
 
+    @GetMapping("/all-roles")
+    public Object getAllRoles(@RequestHeader(value = HttpHeaders.COOKIE) String cookie,
+            @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
+            @AuthenticationPrincipal OAuth2User oauth2User) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
+        headers.set(HttpHeaders.SET_COOKIE, cookie);
+
+        ResponseEntity<Object> responseEntity = null;
+        try {
+            responseEntity = restTemplate.exchange("http://auth-server:9000/roles/find-all",
+                    HttpMethod.GET, new HttpEntity<>(headers), Object.class);
+        } catch (RestClientException e) {
+            log.error("Errore chiamata authorization server per l'ottenimento del ruolo del chiamante", e);
+        }
+
+        return responseEntity != null ? responseEntity.getBody() : null;
+    }
+
     @GetMapping("/resource-base")
     public String helloWorld(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient user)
             throws JsonProcessingException {
