@@ -28,8 +28,11 @@
         Logged in as: <span id="user"></span>
         <br>
         <div class="list-group" id="documents-list"></div>
-
+        
+        <br>
+        <h5>Give permissions:</h5>
         <div class="container roles" id="roles"></div>
+        <br>
 
         <form id="formFile">
             <input class="form-control" type="file" id="fileInput" name="file" required>
@@ -106,7 +109,7 @@
                             <input class="form-check-input" type="checkbox" name="${item.codiRole}">
                             <label class="form-check-label" for="flexCheckDefault">
                                 ${item.descRole}
-                            </label>
+                        </label>
                         </div>`;
 
                     items.push(listItem);
