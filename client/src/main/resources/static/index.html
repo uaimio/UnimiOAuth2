@@ -7,7 +7,7 @@
     <meta name="_csrf" content="${_csrf.token}" />
     <!-- default header name is X-CSRF-TOKEN -->
     <meta name="_csrf_header" content="${_csrf.headerName}" />
-    <title>Demo</title>
+    <title>UnimiOAuth2 Client</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width" />
     <base href="/" />
@@ -22,11 +22,12 @@
         With GitHub: <a href="/oauth2/authorization/github">click here</a>
     </div> -->
     <div class="container unauthenticated">
-        With Local Authorization Server: <a href="/oauth2/authorization/client1">click here</a>
+        To access the main page you need to login: <a href="/oauth2/authorization/client1">click here</a>
     </div>
     <div class="container authenticated" style="display:none">
-        Logged in as: <span id="user"></span>
-        <br>
+        <!-- <br> -->
+        <h2>Logged in as: <span id="user"></span></h2>
+        <!-- <br> -->
         <div class="list-group" id="documents-list"></div>
         
         <br>
@@ -40,7 +41,7 @@
         </form>
 
         <div class="d-flex w-100 justify-content-between">
-            <button onclick="uploadFile()" type="button" class="btn btn-primary">Carica file</button>
+            <button onclick="uploadFile()" type="button" class="btn btn-primary">Upload file</button>
             <button onClick="logout()" type="button" class="btn btn-danger">Logout</button>
         </div>
     </div>
@@ -182,8 +183,11 @@
                     // Only send the token to relative URLs i.e. locally.
                     var cookie = Cookies.get('XSRF-TOKEN');
                     console.log(cookie);
-                    xhr.setRequestHeader("X-XSRF-TOKEN",
-                        cookie);
+                    xhr.setRequestHeader("X-XSRF-TOKEN", cookie);
+                    
+                    // var cookieJsession = Cookies.get('JSESSIONID');
+                    // console.log(cookieJsession);
+                    // xhr.setRequestHeader("JSESSIONID", cookieJsession);
                 }
             }
         }
